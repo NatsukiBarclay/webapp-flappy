@@ -36,7 +36,9 @@ var height = 400;
 var game = new Phaser.Game(width, height, Phaser.AUTO, 'info', stateActions);
 game.started = false;
 var score = 0;
+var score1 = 0;
 var labelScore;
+var labelScore1;
 var splashDisplay;
 
 var gapMargin = 30;
@@ -44,6 +46,7 @@ var pipeEndExtraWidth = 10;
 var pipeHeight = 50;
 var pipeEndHeight = 50;
 var blockHeight = 50;
+
 
 /*
  * Loads all resources for the game and gives them names.
@@ -101,7 +104,7 @@ function start() {
 
     player2 = game.add.sprite(100, 200, "player1Img");
     player2.anchor.setTo(0, 0);
-    player2.scale.setTo(0.15, 0.3);
+    player2.scale.setTo(0.25, 0.25);
     game.physics.arcade.enable(player2);
     player2.body.velocity.y = -100;
     player2.body.gravity.y = 400;
@@ -134,6 +137,7 @@ function start() {
 
 
     labelScore = game.add.text(25, 10, "0");
+    labelScore1 = game.add.text(760, 10, "0");
 
 
     //generatePipe();
@@ -141,6 +145,8 @@ function start() {
 
     var pipeInterval = 1.75;
     game.time.events.loop(pipeInterval * Phaser.Timer.SECOND, generatePipe);
+    game.time.events.loop(Phaser.Timer.SECOND, changeScore);
+    game.time.events.loop(Phaser.Timer.SECOND, changeScore1);
 
 }
 
@@ -197,8 +203,21 @@ function spaceHandler(event) {
 
 
 function changeScore() {
-    score = score + 1;
-    labelScore.setText(score.toString());
+
+    if (!deathPlayer1) {
+        score = score + 1;
+        labelScore.setText(score.toString());
+    }
+
+
+  }
+
+function changeScore1() {
+    if (!deathPlayer2) {
+        score1 = score1 + 1;
+        labelScore1.setText(score1.toString());
+    }
+
 }
 
 //function moveRight(){
@@ -229,13 +248,13 @@ function generatePipe() {
         addPipeBlock(width, y);
     }
 
-    changeScore();
+
 }
 
 var pipes = [];
 
 function addPipeEnd(x, y) {
-    console.log("add pipe end")
+    console.log("add pipe end");
     var block = game.add.sprite(x, y, "pipeEnd");
     pipes.push(block);
     game.physics.arcade.enable(block);
@@ -272,6 +291,9 @@ function addPipeBlock(x, y) {
 //    changeScore();
 //}
 function gameOver1() {
+
+
+
     deathPlayer1 = true;
     player.kill();
     $("#score").val(score.toString());
@@ -280,8 +302,12 @@ function gameOver1() {
 
 
 function gameOver2() {
+
+
+
     deathPlayer2 = true;
     player2.kill();
     $("#score").val(score.toString());
     $("#greeting").show();
 }
+
